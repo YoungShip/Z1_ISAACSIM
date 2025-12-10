@@ -154,7 +154,7 @@ class Extension(omni.ext.IExt):
             # Resolve relative path to URDF
             # __file__ is in exts/isaacsim.import_z1/isaacsim/import_z1/import_z1.py
             # We need to go up 3 levels to get to exts/isaacsim.import_z1
-            ext_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+            ext_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
             urdf_path = os.path.join(ext_path, "data/z1_description/urdf/z1_with_gripper.urdf")
             urdf_path = os.path.abspath(urdf_path)
 
