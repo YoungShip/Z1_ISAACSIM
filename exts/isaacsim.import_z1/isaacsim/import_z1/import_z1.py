@@ -24,6 +24,8 @@ import asyncio
 import math
 # 导入弱引用模块（虽然导入但未使用）
 import weakref
+import os
+import json
 import sys
 
 # 导入 Omni 核心模块
@@ -451,7 +453,8 @@ class Extension(omni.ext.IExt):
             # 执行 URDF 解析和导入命令
             # URDFParseAndImportFile 命令会解析 URDF 文件并将其导入到 USD 场景中
             # 注意：URDF 文件路径需要是绝对路径
-            urdf_path = "/home/kj/Desktop/Projects/Z1_isaacsim/unitree_ros/robots/z1_description/xacro/z1_with_gripper_cam_final.urdf"
+            ext_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+            urdf_path = os.path.abspath(os.path.join(ext_path, "data/z1_description/urdf/z1_with_gripper_cam_final.urdf"))
             print(f"正在导入 Z1 机械臂（带相机）: {urdf_path}")
             omni.kit.commands.execute(
                 "URDFParseAndImportFile",
