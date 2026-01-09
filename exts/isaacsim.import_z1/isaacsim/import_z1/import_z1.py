@@ -729,10 +729,29 @@ class Extension(omni.ext.IExt):
         except Exception as e:
             print(f"Articulation initialization warning: {e}")
 
-        # 2) 加载我们为 Unitree_Z1 写好的 RMPflow 配置（policy_map.json 中已注册）
-        rmp_cfg = mg.interface_config_loader.load_supported_motion_policy_config(
-            "Unitree_Z1", "RMPflow"
-        )
+        # 2) 加载我们为 Unitree_Z1 写好的 RMPflow 配置（本地文件加载）
+        module_dir = os.path.dirname(__file__)
+        rmp_config_dir = os.path.join(module_dir, "rmpflow")
+        config_path = os.path.join(rmp_config_dir, "config.json")
+        
+        # 确保配置文件存在
+        if not os.path.exists(config_path):
+             print(f"Error: RMPflow config file not found at {config_path}")
+             # 也可以选择抛出异常或者返回
+        
+        with open(config_path, 'r') as f:
+            config_data = json.load(f)
+            
+        # 解析相对路径并构建绝对路径
+        relative_paths = config_data.get("relative_asset_paths", {})
+        rmp_cfg = {
+            "robot_description_path": os.path.join(rmp_config_dir, relative_paths["robot_description_path"]),
+            "urdf_path": os.path.join(rmp_config_dir, relative_paths["urdf_path"]),
+            "rmpflow_config_path": os.path.join(rmp_config_dir, relative_paths["rmpflow_config_path"]),
+            "end_effector_frame_name": config_data["end_effector_frame_name"],
+            "maximum_substep_size": config_data["maximum_substep_size"],
+            "ignore_robot_state_updates": config_data.get("ignore_robot_state_updates", False)
+        }
 
         # 3) 创建 RmpFlow 对象
         self._rmp_flow = mg.lula.motion_policies.RmpFlow(**rmp_cfg)
